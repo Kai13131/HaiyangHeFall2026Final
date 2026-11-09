@@ -10,8 +10,13 @@ public class PlayerController : MonoBehaviour
     public float MouseSensitivity = 5f;
     private float xRotation = 0f;
 
-    public float jumpForce = 8f;
+    public float jumpForce = 6f;
     private int jumpCount = 0;
+
+    public float KillRange = 1.5f;
+    private HumanNPC targetHuman;
+
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -26,6 +31,7 @@ public class PlayerController : MonoBehaviour
     {
         Move();
         CameraMove();
+        Kill();
     }
 
     void Move()
@@ -67,9 +73,13 @@ public class PlayerController : MonoBehaviour
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             jumpCount++;
 
-            if (jumpCount >= 2)
+            if (jumpCount >= 1)
             {
-                jumpForce = 8f  ;
+                jumpForce = 8f;
+            }
+            else
+            {
+                jumpForce = 6f;
             }
         }
     }
@@ -80,6 +90,56 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             jumpCount = 0;
+        }
+    }
+
+    public void Kill()
+    {
+        Collider[] nearbyHumans = Physics.OverlapSphere(transform.position, KillRange);
+
+        targetHuman = null;
+
+        float closestDistance = KillRange;
+
+        foreach (Collider col in nearbyHumans)
+        {
+            HumanNPC human = col.GetComponentInParent<HumanNPC>();
+
+            if (human == null || !human.isAlive)
+            {
+                continue;
+            }
+
+            if (!human.CompareTag("Human"))
+            {
+                Debug.Log("HumanNPC found, but tag is not Human: " + human.name);
+                continue;
+            }
+
+            float currentDistance = Vector3.Distance(
+                transform.position,
+                col.ClosestPoint(transform.position)
+            );
+
+            if (currentDistance < closestDistance)
+            {
+                closestDistance = currentDistance;
+                targetHuman = human;
+            }
+        }
+
+        // Press E after finding a valid target.
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            if (targetHuman != null)
+            {
+                targetHuman.Die();
+                Debug.Log("Human Killed: " + targetHuman.name);
+            }
+            else
+            {
+                Debug.Log("No living human in kill range!");
+            }
         }
     }
 }
