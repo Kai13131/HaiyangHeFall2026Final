@@ -3,7 +3,13 @@ using UnityEngine;
 public class HumanNPC : MonoBehaviour
 {
     public bool isAlive = true;
+    public float speed = 4f;
 
+    public void Walk()
+    {
+        float x = Random.Range(2, 6);
+
+    }
     public void Die()
     {
         if (!isAlive)
@@ -17,6 +23,7 @@ public class HumanNPC : MonoBehaviour
         if (humanRb != null)
         {
             humanRb.constraints = RigidbodyConstraints.None;
+
             humanRb.linearVelocity = Vector3.zero;
             humanRb.angularVelocity = Vector3.zero;
             humanRb.isKinematic = false;
