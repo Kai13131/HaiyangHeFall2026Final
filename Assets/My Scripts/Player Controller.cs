@@ -30,7 +30,7 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         Move();
-        CameraMove();
+        //CameraMove();
         Kill();
     }
 
@@ -46,7 +46,7 @@ public class PlayerController : MonoBehaviour
         Jump();
     }
 
-    void CameraMove()
+    /*void CameraMove()
     {
         float mouseX = Input.GetAxis("Mouse X") * MouseSensitivity;
         float mouseY = -Input.GetAxis("Mouse Y") * MouseSensitivity;
@@ -59,7 +59,7 @@ public class PlayerController : MonoBehaviour
         xRotation = Mathf.Clamp(xRotation, -80f, 80f);
 
         camera.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
-    }
+    }*/
 
     void Jump()
     {
