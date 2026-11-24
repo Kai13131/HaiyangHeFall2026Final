@@ -30,7 +30,7 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         Move();
-        //CameraMove();
+        CameraMove();
         Kill();
     }
 
@@ -46,7 +46,7 @@ public class PlayerController : MonoBehaviour
         Jump();
     }
 
-    /*void CameraMove()
+    void CameraMove()
     {
         float mouseX = Input.GetAxis("Mouse X") * MouseSensitivity;
         float mouseY = -Input.GetAxis("Mouse Y") * MouseSensitivity;
@@ -59,7 +59,7 @@ public class PlayerController : MonoBehaviour
         xRotation = Mathf.Clamp(xRotation, -80f, 80f);
 
         camera.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
-    }*/
+    }
 
     void Jump()
     {
@@ -95,7 +95,14 @@ public class PlayerController : MonoBehaviour
 
     public void Kill()
     {
-        Collider[] nearbyHumans = Physics.OverlapSphere(transform.position, KillRange);
+        // Only interact when E is pressed
+        if (!Input.GetKeyDown(KeyCode.E))
+            return;
+
+
+
+        Collider[] nearbyHumans = Physics.OverlapSphere(
+            transform.position, KillRange);
 
         targetHuman = null;
 
@@ -112,7 +119,6 @@ public class PlayerController : MonoBehaviour
 
             if (!human.CompareTag("Human"))
             {
-                Debug.Log("HumanNPC found, but tag is not Human: " + human.name);
                 continue;
             }
 
@@ -128,18 +134,17 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        // Press E after finding a valid target.
-        if (Input.GetKeyDown(KeyCode.E))
+        // Kill the closest living human
+        if (targetHuman != null)
         {
-            if (targetHuman != null)
-            {
-                targetHuman.Die();
-                Debug.Log("Human Killed: " + targetHuman.name);
-            }
-            else
-            {
-                Debug.Log("No living human in kill range!");
-            }
+            targetHuman.Die();
+
+            Debug.Log("Human Killed: " + targetHuman.name);
+        }
+        else
+        {
+            Debug.Log("Nothing to interact with!");
         }
     }
 }
+
